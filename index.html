@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padi MR297 Growth & Derivative Simulator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- KaTeX for beautiful math equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbars for a premium feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800">
+
+    <!-- Header/Navigation Bar -->
+    <header class="bg-emerald-900 text-white shadow-lg sticky top-0 z-50 border-b border-emerald-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-500 p-2.5 rounded-xl shadow-inner flex items-center justify-center">
+                    <i class="fa-solid fa-wheat-awn text-emerald-950 text-2xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black tracking-tight flex items-center gap-2">
+                        Padi MR297 <span class="text-emerald-400 font-medium text-sm sm:text-base bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800">SFM: Food Security</span>
+                    </h1>
+                    <p class="text-xs text-emerald-200">Applying Calculus $f'(x)$ to Optimize Malaysia's Rice Yields</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 text-xs text-emerald-100 bg-emerald-950/60 px-3 py-2 rounded-lg border border-emerald-800">
+                <i class="fa-solid fa-graduation-cap text-amber-400 text-sm"></i>
+                <span>Undergraduate Bioscience & Agro-technology Module</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Math, Explanations & Parameter Controls (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- Bioscience Context Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">Scenario Context</span>
+                        <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-1 rounded-full">MARDI Data</span>
+                    </div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-seedling text-emerald-600"></i> The Padi Growth Curve
+                    </h2>
+                    <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                        In Malaysia, self-sufficiency in rice is critical for national food security. The high-yielding variety <strong>MR297</strong> (developed by MARDI) follows a biological <strong>logistic growth curve</strong>. 
+                        By modeling height growth $f(x)$ over 120 Days After Planting (DAP), we apply the <strong>first derivative $f'(x)$</strong> (growth rate in cm/day) to identify the <strong>inflection point</strong>. At this point, plant metabolic demand peaks, marking the absolute ideal window for critical nitrogen fertilization.
+                    </p>
+                    <div class="mt-3 text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100 flex items-start gap-2">
+                        <i class="fa-solid fa-book-open text-emerald-700 mt-0.5"></i>
+                        <span><strong>Source Reference:</strong> MARDI Manual Penanaman Padi Sawah Keupayaan Tinggi, National Agrofood Policy 2021-2030 (DAN 2.0).</span>
+                    </div>
+                </div>
+
+                <!-- Math Equations Card -->
+                <div class="bg-gradient-to-br from-emerald-950 to-slate-950 text-white rounded-2xl shadow-xl p-6 border border-emerald-800/50">
+                    <h3 class="text-base font-bold text-emerald-400 flex items-center gap-2 mb-4 border-b border-emerald-800/50 pb-2">
+                        <i class="fa-solid fa-calculator"></i> Mathematical Models
+                    </h3>
+                    <div class="space-y-4 text-sm leading-relaxed">
+                        <!-- Logistic Growth Formula -->
+                        <div>
+                            <span class="text-xs text-emerald-300 font-semibold tracking-wider block mb-1 uppercase">1. Height Function $f(x)$ (Logistic)</span>
+                            <div class="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-center my-1 overflow-x-auto text-base">
+                                $$f(x) = \frac{L}{1 + e^{-k(x - x_0)}}$$
+                            </div>
+                            <p class="text-xs text-slate-300 mt-1">
+                                Where $L$ is the Carrying Capacity (max height), $k$ is the growth rate constant, and $x_0$ is the midpoint (inflection day).
+                            </p>
+                        </div>
+
+                        <!-- Derivative Formula -->
+                        <div>
+                            <span class="text-xs text-emerald-300 font-semibold tracking-wider block mb-1 uppercase">2. Growth Rate $f'(x)$ (First Derivative)</span>
+                            <div class="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-center my-1 overflow-x-auto text-base">
+                                $$f'(x) = \frac{L \cdot k \cdot e^{-k(x - x_0)}}{\left(1 + e^{-k(x - x_0)}\right)^2} = k \cdot f(x)\left(1 - \frac{f(x)}{L}\right)$$
+                            </div>
+                            <p class="text-xs text-slate-300 mt-1">
+                                This derivative measures the instantaneous plant growth rate in <strong class="text-emerald-400">cm/day</strong> at any day $x$.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Parameter Controls -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+                        <i class="fa-solid fa-sliders text-emerald-600"></i> Environmental Parameters
+                    </h3>
+                    
+                    <!-- L Parameter Slider -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="font-medium text-slate-700 flex items-center gap-1">
+                                Max Capacity ($L$, cm) 
+                                <i class="fa-solid fa-circle-info text-slate-400 tooltip" title="Determined by soil fertility & irrigation quality"></i>
+                            </span>
+                            <span class="font-mono text-emerald-700 font-bold" id="valL">105 cm</span>
+                        </div>
+                        <input id="sliderL" type="range" min="80" max="130" value="105" step="1" class="w-full accent-emerald-600 cursor-pointer h-2 bg-slate-100 rounded-lg appearance-none">
+                    </div>
+
+                    <!-- k Parameter Slider -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="font-medium text-slate-700 flex items-center gap-1">
+                                Growth Rate Coeff. ($k$) 
+                                <i class="fa-solid fa-circle-info text-slate-400 tooltip" title="Depends on padi genetics and ambient temperature"></i>
+                            </span>
+                            <span class="font-mono text-emerald-700 font-bold" id="valK">0.065</span>
+                        </div>
+                        <input id="sliderK" type="range" min="0.04" max="0.10" value="0.065" step="0.005" class="w-full accent-emerald-600 cursor-pointer h-2 bg-slate-100 rounded-lg appearance-none">
+                    </div>
+
+                    <!-- x0 Parameter Slider -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="font-medium text-slate-700 flex items-center gap-1">
+                                Inflection Day ($x_0$, DAP) 
+                                <i class="fa-solid fa-circle-info text-slate-400 tooltip" title="Days until peak vegetative velocity is achieved"></i>
+                            </span>
+                            <span class="font-mono text-emerald-700 font-bold" id="valX0">50 DAP</span>
+                        </div>
+                        <input id="sliderX0" type="range" min="35" max="65" value="50" step="1" class="w-full accent-emerald-600 cursor-pointer h-2 bg-slate-100 rounded-lg appearance-none">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Interactive Charts & Visualizations (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Timeline Slider & Control Hub -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-timeline text-emerald-600"></i> Interactive Growth Timeline
+                            </h3>
+                            <p class="text-xs text-slate-500">Drag or click on the graph to observe rate changes at a specific point</p>
+                        </div>
+                        <!-- Play/Pause Button -->
+                        <div class="flex items-center space-x-2">
+                            <button id="btnPlay" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm">
+                                <i id="playIcon" class="fa-solid fa-play"></i> <span id="playText">Animate Crop Cycle</span>
+                            </button>
+                            <button id="btnReset" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition-all">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- DAP Timeline Input -->
+                    <div class="space-y-2 bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
+                        <div class="flex justify-between text-sm font-semibold">
+                            <span class="text-slate-700">Days After Planting (DAP)</span>
+                            <span class="text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full" id="timelineDAP">Day 50</span>
+                        </div>
+                        <input id="timelineSlider" type="range" min="0" max="120" value="50" step="1" class="w-full accent-emerald-600 cursor-pointer h-3 bg-slate-200 rounded-lg appearance-none">
+                        <div class="flex justify-between text-[10px] text-slate-400 px-1">
+                            <span>0 DAP (Sowing)</span>
+                            <span>30 DAP (Tillering)</span>
+                            <span>60 DAP (Heading)</span>
+                            <span>90 DAP (Flowering)</span>
+                            <span>120 DAP (Harvest)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Analysis Display (Dynamic Cards) -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    
+                    <!-- Left: Interactive Graph -->
+                    <div class="md:col-span-8 bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="text-sm font-bold text-slate-900">MR297 Growth Dynamics Dashboard</h4>
+                            <div class="flex items-center gap-4 text-xs font-medium">
+                                <span class="flex items-center gap-1 text-emerald-600"><span class="w-2.5 h-2.5 bg-emerald-600 rounded-full inline-block"></span> f(x) Height</span>
+                                <span class="flex items-center gap-1 text-amber-500"><span class="w-2.5 h-2.5 bg-amber-500 rounded-full inline-block"></span> f'(x) Growth Rate</span>
+                            </div>
+                        </div>
+                        <!-- Chart Container -->
+                        <div class="relative h-[280px] w-full">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                        <p class="text-[10px] text-slate-400 text-center mt-2 italic">
+                            💡 Tip: Click on any point on the lines to snapshot calculus details.
+                        </p>
+                    </div>
+
+                    <!-- Right: Dynamic Plant Visualization -->
+                    <div class="md:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 flex flex-col justify-between">
+                        <h4 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 mb-2 text-center">Physical Plant Visualizer</h4>
+                        <div class="bg-gradient-to-b from-sky-50 to-blue-50/50 rounded-xl p-3 flex items-center justify-center flex-grow border border-slate-100">
+                            <!-- SVG Animated Rice Plant -->
+                            <svg id="padiVisualizer" class="w-full h-44" viewBox="0 0 100 120">
+                                <!-- Sky background done via gradient -->
+                                <!-- Water / Soil Line -->
+                                <rect x="0" y="105" width="100" height="15" fill="#3e2723" /> <!-- Mud Soil -->
+                                <rect x="0" y="98" width="100" height="7" fill="#0284c7" fill-opacity="0.4" /> <!-- Paddy Floodwater -->
+                                
+                                <!-- Roots -->
+                                <path id="plantRoots" d="M 50,105 Q 45,115 42,118 M 50,105 Q 55,115 58,118 M 50,105 Q 50,118 50,120" stroke="#a1a1aa" stroke-width="1.5" fill="none" />
+                                
+                                <!-- Stems & Tillers (Group) -->
+                                <g id="plantGroup" transform="translate(50, 105)">
+                                    <!-- Dynamic elements will be manipulated by JS -->
+                                    <path id="stemMain" d="M 0,0 Q -5,-40 0,-80" stroke="#22c55e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                                    <path id="stemTillerLeft" d="M 0,0 Q -15,-30 -10,-60" stroke="#4ade80" stroke-width="2" fill="none" stroke-linecap="round"/>
+                                    <path id="stemTillerRight" d="M 0,0 Q 15,-35 8,-65" stroke="#4ade80" stroke-width="2" fill="none" stroke-linecap="round"/>
+                                    
+                                    <!-- Rice Panicles (Grains) -->
+                                    <path id="panicleLeft" d="M -10,-60 Q -18,-72 -12,-85" stroke="#fbbf24" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0"/>
+                                    <path id="panicleRight" d="M 8,-65 Q 16,-77 12,-90" stroke="#fbbf24" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="text-center mt-3">
+                            <span class="text-xs font-bold text-slate-500 block">Biological Phase</span>
+                            <span id="txtPhaseName" class="text-sm font-extrabold text-emerald-800">Vegetative Stage</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Calculus Diagnostics Panel (Displays f(x) and f'(x) values dynamically) -->
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 rounded-2xl p-6">
+                    <h3 class="text-base font-bold text-emerald-900 flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-flask-vial"></i> Instantaneous Calculus Diagnosis
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- f(x) Output -->
+                        <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-emerald-100 shadow-inner">
+                            <span class="text-xs text-slate-500 font-semibold block uppercase tracking-wider">Plant Height $f(x)$</span>
+                            <div class="flex items-baseline space-x-2 mt-1">
+                                <span class="text-3xl font-extrabold text-slate-900" id="diagHeight">52.50</span>
+                                <span class="text-sm font-bold text-slate-500">cm</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-1 font-mono" id="equationHeightText">f(50) = 52.50cm</div>
+                        </div>
+
+                        <!-- f'(x) Output -->
+                        <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-emerald-100 shadow-inner">
+                            <span class="text-xs text-slate-500 font-semibold block uppercase tracking-wider">Growth Speed $f'(x)$</span>
+                            <div class="flex items-baseline space-x-2 mt-1">
+                                <span class="text-3xl font-extrabold text-emerald-700" id="diagSpeed">1.71</span>
+                                <span class="text-sm font-bold text-emerald-600">cm/day</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-1 font-mono" id="equationSpeedText">f'(50) = 1.71 cm/d</div>
+                        </div>
+
+                        <!-- Growth Type -->
+                        <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-emerald-100 shadow-inner">
+                            <span class="text-xs text-slate-500 font-semibold block uppercase tracking-wider">Acceleration Profile $f''(x)$</span>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span id="diagAccelerationIcon" class="text-2xl text-emerald-600"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                                <span class="text-lg font-bold text-slate-900" id="diagAcceleration">Maximum Velocity</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-1" id="diagAccelerationSub">Inflection Point Achieved</div>
+                        </div>
+                    </div>
+
+                    <!-- Layman & Biological Context Box -->
+                    <div class="mt-4 bg-white rounded-xl p-4 border border-emerald-200/50">
+                        <div class="flex items-center space-x-2 mb-1.5">
+                            <i class="fa-solid fa-circle-question text-emerald-600 text-sm"></i>
+                            <span class="text-xs font-bold text-emerald-950 uppercase tracking-wider">Biological Insight & Advice</span>
+                        </div>
+                        <p id="laymanText" class="text-slate-700 text-sm leading-relaxed">
+                            At day 50, the padi is undergoing its fastest cellular division. Nutrient absorption is at its absolute maximum. Ensure perfect fertilization management to boost self-sufficiency outcomes.
+                        </p>
+                        <div id="actionBadge" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-950 border border-amber-200">
+                            <i class="fa-solid fa-triangle-exclamation animate-bounce"></i> Action required!
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer/Disclaimer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+            <p>Developed for Malaysia Sustainable Food Security and Precision Agriculture Analytics (SFM Level 400).</p>
+            <p>&copy; 2026 Malaysia Ministry of Agriculture and Food Security (KPKM) & Bioscience Simulators. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        
+        // Math Parameters (Global State)
+        let L = 105;   // Carrying Capacity (cm)
+        let k = 0.065; // Growth constant
+        let x0 = 50;   // Inflection Day
+        let selectedDay = 50; // Current interactive slider day
+        
+        let animationInterval = null;
+        let isAnimating = false;
+
+        // Mathematical Equations
+        function f(x) {
+            return L / (1 + Math.exp(-k * (x - x0)));
+        }
+
+        function df(x) {
+            // Analytical derivative in terms of x
+            const expPart = Math.exp(-k * (x - x0));
+            return (L * k * expPart) / Math.pow(1 + expPart, 2);
+        }
+
+        function ddf(x) {
+            // Second derivative to determine acceleration profiles
+            const expPart = Math.exp(-k * (x - x0));
+            const denom = Math.pow(1 + expPart, 3);
+            return (L * Math.pow(k, 2) * expPart * (expPart - 1)) / denom;
+        }
+
+        // Biological Stage Data
+        function getBiologicalAnalysis(day) {
+            const currentHeight = f(day);
+            const rateOfGrowth = df(day);
+            const acceleration = ddf(day);
+
+            if (day < 20) {
+                return {
+                    phase: "Early Vegetative / Root establishment",
+                    explanation: `During days 0 to 20, the padi seedling experiences transplant shock and establishes roots. Growth speed is low (<strong>${rateOfGrowth.toFixed(2)} cm/day</strong>) because biological energy is diverted downwards.`,
+                    action: "ACTION REQUIRED: Maintain shallow standing water (2-3 cm) to prevent weed growth and promote deep rooting.",
+                    badgeClass: "bg-blue-100 text-blue-950 border-blue-200",
+                    accelText: "Slow Acceleration"
+                };
+            } else if (day >= 20 && day < 45) {
+                return {
+                    phase: "Active Tillering Phase",
+                    explanation: `From day 20 to 45, the MR297 crop produces many stems (tillers). Height is accelerating exponentially. Growth speed is climbing steadily, currently at <strong>${rateOfGrowth.toFixed(2)} cm/day</strong>.`,
+                    action: "ACTION REQUIRED: Apply the first mid-stage nitrogen top-dressing to increase active panicle-bearing tillers.",
+                    badgeClass: "bg-emerald-100 text-emerald-950 border-emerald-200",
+                    accelText: "Positive Acceleration"
+                };
+            } else if (day >= 45 && day <= 55) {
+                return {
+                    phase: "Panicle Initiation (Inflection Window)",
+                    explanation: `<strong>THE INFLECTION WINDOW!</strong> The crop growth rate reaches its peak mathematical limit at <strong>${rateOfGrowth.toFixed(2)} cm/day</strong>. Crop height is changing fastest here. Energy consumption is at a lifetime high.`,
+                    action: "CRITICAL: Apply the final urea top-dressing. This specific chemical action at the derivative peak maximizes grains per panicle.",
+                    badgeClass: "bg-red-100 text-red-950 border-red-200 animate-pulse",
+                    accelText: "Peak Velocity ($f''(x) \\approx 0$)"
+                };
+            } else if (day > 55 && day < 85) {
+                return {
+                    phase: "Heading & Flowering Phase",
+                    explanation: `At days 56 to 85, height growth slows down. The first derivative drops to <strong>${rateOfGrowth.toFixed(2)} cm/day</strong> because the plant is reallocating starches away from stem elongation and towards flower development.`,
+                    action: "MONITORING: Ensure consistent flooding. Spot-treat pests like planthoppers which thrive on juicy stems in this phase.",
+                    badgeClass: "bg-amber-100 text-amber-950 border-amber-200",
+                    accelText: "Decelerating Velocity"
+                };
+            } else {
+                return {
+                    phase: "Ripening & Starch Accumulation",
+                    explanation: `The crop has neared its maturity plateau ($L \\approx ${L} cm$). Height change is practically zero (<strong>${rateOfGrowth.toFixed(2)} cm/day</strong>). The energy is concentrated on converting simple sugars into starchy grains, causing the plant to turn golden.`,
+                    action: "HARVEST STRATEGY: Drain field 10 days before harvesting (typically Day 115-120) to consolidate grain ripening and dry the soil for harvesters.",
+                    badgeClass: "bg-yellow-100 text-yellow-950 border-yellow-200",
+                    accelText: "Near-Zero Speed"
+                };
+            }
+        }
+
+        // SVG Plant growth animator
+        function updateSVGPlant(day) {
+            const maxH = L;
+            const currentH = f(day);
+            const ratio = currentH / maxH; // Scale between 0 and 1
+
+            const plantGroup = document.getElementById("plantGroup");
+            const stemMain = document.getElementById("stemMain");
+            const stemTillerLeft = document.getElementById("stemTillerLeft");
+            const stemTillerRight = document.getElementById("stemTillerRight");
+            const panicleLeft = document.getElementById("panicleLeft");
+            const panicleRight = document.getElementById("panicleRight");
+
+            // Scale plant height based on logistic output ratio
+            const heightMultiplier = ratio * 100; // max structural height is ~100px
+            const widthMultiplier = ratio * 1.5;
+
+            // Update stems length dynamically
+            stemMain.setAttribute("d", `M 0,0 Q -${5 * ratio},-${heightMultiplier * 0.5} 0,-${heightMultiplier * 0.95}`);
+            stemTillerLeft.setAttribute("d", `M 0,0 Q -${15 * ratio},-${heightMultiplier * 0.45} -${12 * ratio},-${heightMultiplier * 0.7}`);
+            stemTillerRight.setAttribute("d", `M 0,0 Q ${15 * ratio},-${heightMultiplier * 0.45} ${10 * ratio},-${heightMultiplier * 0.75}`);
+            
+            stemMain.setAttribute("stroke-width", 1 + ratio * 2);
+            stemTillerLeft.setAttribute("stroke-width", 0.8 + ratio * 1.5);
+            stemTillerRight.setAttribute("stroke-width", 0.8 + ratio * 1.5);
+
+            // Change color dynamically from young vibrant green, to mature olive, to golden ripe
+            let stemColor = "#22c55e"; // bright green
+            let panColor = "#fbbf24"; // golden yellow
+            
+            if (day > 50 && day <= 85) {
+                stemColor = "#16a34a"; // forest green
+            } else if (day > 85) {
+                stemColor = "#a3e635"; // yellow-green
+            }
+
+            stemMain.setAttribute("stroke", stemColor);
+            stemTillerLeft.setAttribute("stroke", stemColor);
+            stemTillerRight.setAttribute("stroke", stemColor);
+
+            // Render panicles if Day > 60 (Reproductive/Ripening Stage)
+            if (day > 60) {
+                const panicleOpacity = Math.min((day - 60) / 25, 1);
+                panicleLeft.setAttribute("opacity", panicleOpacity);
+                panicleRight.setAttribute("opacity", panicleOpacity);
+
+                // Make panicles grow and droop dynamically
+                panicleLeft.setAttribute("d", `M -${12 * ratio},-${heightMultiplier * 0.7} Q -${18 * ratio},-${heightMultiplier * 0.8} -${15 * ratio},-${heightMultiplier * 0.6}`);
+                panicleRight.setAttribute("d", `M ${10 * ratio},-${heightMultiplier * 0.75} Q ${18 * ratio},-${heightMultiplier * 0.85} ${14 * ratio},-${heightMultiplier * 0.65}`);
+            } else {
+                panicleLeft.setAttribute("opacity", 0);
+                panicleRight.setAttribute("opacity", 0);
+            }
+        }
+
+        // Generate Chart Data Array
+        function generateData() {
+            const heightData = [];
+            const speedData = [];
+            const labels = [];
+            
+            for (let d = 0; d <= 120; d += 2) {
+                labels.push(d);
+                heightData.push(f(d));
+                speedData.push(df(d));
+            }
+            return { labels, heightData, speedData };
+        }
+
+        // Get Tangent Line Data Array around selectedDay
+        function generateTangentLineData(selectedX) {
+            const dataPoints = Array(61).fill(null); // Corresponding to labels 0 to 120 (step 2)
+            const slope = df(selectedX);
+            const yOffset = f(selectedX);
+
+            // Define window length around chosen coordinate
+            const halfWindow = 12; // 24 days domain around selectedX
+            
+            for (let i = 0; i <= 60; i++) {
+                const x = i * 2;
+                if (Math.abs(x - selectedX) <= halfWindow) {
+                    // Tangent equation: y = f'(x_coord)*(x - x_coord) + f(x_coord)
+                    dataPoints[i] = slope * (x - selectedX) + yOffset;
+                }
+            }
+            return dataPoints;
+        }
+
+        // Setup Chart
+        let ctx = document.getElementById('growthChart').getContext('2d');
+        let initialData = generateData();
+        let tangentData = generateTangentLineData(selectedDay);
+
+        let growthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: initialData.labels,
+                datasets: [
+                    {
+                        label: 'Crop Height f(x)',
+                        data: initialData.heightData,
+                        borderColor: '#059669', // Emerald
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        yAxisID: 'yHeight',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Growth Rate f\'(x)',
+                        data: initialData.speedData,
+                        borderColor: '#d97706', // Amber
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        yAxisID: 'ySpeed',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Tangent at Selected Day',
+                        data: tangentData,
+                        borderColor: '#dc2626', // Red
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        fill: false,
+                        yAxisID: 'yHeight'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                onClick: (e) => {
+                    const points = growthChart.getElementsAtEventForMode(e, 'nearest', { intersect: false }, true);
+                    if (points.length) {
+                        const index = points[0].index;
+                        const dayVal = index * 2;
+                        document.getElementById('timelineSlider').value = dayVal;
+                        updateApplicationState(dayVal);
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Days After Planting (DAP)',
+                            font: { size: 10, weight: 'bold' }
+                        },
+                        grid: { display: false }
+                    },
+                    yHeight: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Height (cm)',
+                            font: { size: 10, weight: 'bold' }
+                        },
+                        min: 0,
+                        max: 140,
+                        grid: { color: '#f1f5f9' }
+                    },
+                    ySpeed: {
+                        type: 'linear',
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Rate of Change (cm/day)',
+                            font: { size: 10, weight: 'bold' }
+                        },
+                        min: 0,
+                        max: 3,
+                        grid: { drawOnChartArea: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false } // Custom legend layout in HTML instead
+                }
+            }
+        });
+
+        // Sync inputs and state
+        function updateApplicationState(day) {
+            selectedDay = parseInt(day);
+            
+            // Updates sliders texts
+            document.getElementById("timelineDAP").innerText = `Day ${selectedDay}`;
+            document.getElementById("timelineSlider").value = selectedDay;
+
+            // Recalculates Formulas
+            const height = f(selectedDay);
+            const rate = df(selectedDay);
+            const accel = ddf(selectedDay);
+
+            // Interface Updates
+            document.getElementById("diagHeight").innerText = height.toFixed(2);
+            document.getElementById("diagSpeed").innerText = rate.toFixed(2);
+            
+            document.getElementById("equationHeightText").innerText = `f(${selectedDay}) = ${height.toFixed(2)} cm`;
+            document.getElementById("equationSpeedText").innerText = `f'(${selectedDay}) = ${rate.toFixed(2)} cm/day`;
+
+            // Adjust acceleration display indicator
+            const accelSpan = document.getElementById("diagAcceleration");
+            const accelIcon = document.getElementById("diagAccelerationIcon");
+            const accelSub = document.getElementById("diagAccelerationSub");
+            
+            if (Math.abs(accel) < 0.01) {
+                accelSpan.innerText = "Inflection Point";
+                accelIcon.innerHTML = `<i class="fa-solid fa-arrows-left-right text-amber-500"></i>`;
+                accelSub.innerText = "f''(x) ≈ 0, Maximum speed achieved";
+            } else if (accel > 0) {
+                accelSpan.innerText = "Accelerating Growth";
+                accelIcon.innerHTML = `<i class="fa-solid fa-circle-chevron-up text-emerald-500 animate-bounce"></i>`;
+                accelSub.innerText = `f''(x) = +${accel.toFixed(3)} (Speed rising)`;
+            } else {
+                accelSpan.innerText = "Slowing Growth";
+                accelIcon.innerHTML = `<i class="fa-solid fa-circle-chevron-down text-blue-400"></i>`;
+                accelSub.innerText = `f''(x) = ${accel.toFixed(3)} (Speed falling)`;
+            }
+
+            // Layman Analysis Rendering
+            const analysis = getBiologicalAnalysis(selectedDay);
+            document.getElementById("laymanText").innerHTML = analysis.explanation;
+            
+            const badge = document.getElementById("actionBadge");
+            badge.className = `mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${analysis.badgeClass}`;
+            badge.innerHTML = `<i class="fa-solid fa-hand-holding-droplet"></i> ${analysis.action}`;
+
+            document.getElementById("txtPhaseName").innerText = analysis.phase;
+
+            // Visual Plant Update
+            updateSVGPlant(selectedDay);
+
+            // Refresh Tangent Point on graph
+            growthChart.data.datasets[2].data = generateTangentLineData(selectedDay);
+            growthChart.update('none'); // silent updates
+        }
+
+        // Listen for Sliders Change
+        document.getElementById("sliderL").addEventListener("input", function(e) {
+            L = parseFloat(e.target.value);
+            document.getElementById("valL").innerText = `${L} cm`;
+            rebuildChart();
+        });
+
+        document.getElementById("sliderK").addEventListener("input", function(e) {
+            k = parseFloat(e.target.value);
+            document.getElementById("valK").innerText = k.toFixed(3);
+            rebuildChart();
+        });
+
+        document.getElementById("sliderX0").addEventListener("input", function(e) {
+            x0 = parseInt(e.target.value);
+            document.getElementById("valX0").innerText = `${x0} DAP`;
+            rebuildChart();
+        });
+
+        document.getElementById("timelineSlider").addEventListener("input", function(e) {
+            updateApplicationState(e.target.value);
+        });
+
+        function rebuildChart() {
+            const fresh = generateData();
+            growthChart.data.datasets[0].data = fresh.heightData;
+            growthChart.data.datasets[1].data = fresh.speedData;
+            updateApplicationState(selectedDay);
+        }
+
+        // Timeline Animation Core
+        document.getElementById("btnPlay").addEventListener("click", function() {
+            if (isAnimating) {
+                pauseAnimation();
+            } else {
+                playAnimation();
+            }
+        });
+
+        document.getElementById("btnReset").addEventListener("click", function() {
+            pauseAnimation();
+            updateApplicationState(0);
+        });
+
+        function playAnimation() {
+            isAnimating = true;
+            document.getElementById("playIcon").className = "fa-solid fa-pause";
+            document.getElementById("playText").innerText = "Pause Simulation";
+            
+            let curD = parseInt(document.getElementById("timelineSlider").value);
+            if (curD >= 120) curD = 0;
+
+            animationInterval = setInterval(() => {
+                curD++;
+                if (curD > 120) {
+                    pauseAnimation();
+                } else {
+                    updateApplicationState(curD);
+                }
+            }, 80); // Speed modifier of the timeline animation
+        }
+
+        function pauseAnimation() {
+            isAnimating = false;
+            document.getElementById("playIcon").className = "fa-solid fa-play";
+            document.getElementById("playText").innerText = "Animate Crop Cycle";
+            clearInterval(animationInterval);
+        }
+
+        // Page Boot Loader
+        window.onload = function() {
+            // Apply standard mathematical typesetting to body
+            try {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false}
+                    ]
+                });
+            } catch (err) {
+                console.error("Katex rendering error", err);
+            }
+            updateApplicationState(selectedDay);
+        }
+    </script>
+</body>
+</html>
